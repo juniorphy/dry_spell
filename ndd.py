@@ -1,11 +1,9 @@
 import numpy as np
 import pandas as pd
 import glob
-mun_name = pd.read_csv('days_dry_2017.csv', sep=';')
-mun_name = np.array(mun_name['Municipio'])
-#print(len(mun_name))
+import datetime
 
-ndd = np.load('number_days_dry_month.npy')
+np.set_printoptions(threshold=99999, suppress=True, precision=4)
 
 def sum_months(data, scale):
     
@@ -21,15 +19,36 @@ def sum_months(data, scale):
     A[scale-1:] = glue
     return A
 
+mun_name = pd.read_csv('days_dry_2017.csv', sep=';')
+mun_name = np.array(mun_name['Municipio'])
+
+ndd = np.load('number_days_dry_month.npy')
+
+startdate = datetime.datetime(1973, 1 , 1)
+enddate = datetime.datetime(2019, 7, 31)
+
+dates = pd.date_range(startdate, enddate, freq='M')
+calyear = dates.year
+calmon = dates.month
+
+
 ndd_full = np.full((4, ndd.shape[0], ndd.shape[1]) , np.nan)
+ndd_annual = np.full(( ndd.shape[0], 46) , np.nan)
 
-for c,ii in enumerate([2, 3, 4, 6 ]):
-    for m in range(len(mun_name)):
-       # print(mun_name[m])
+for m in range(len(mun_name)):
+    
+    for y in range(46):
+        
+        id = np.where(calyear == y+1973)[0]
+        if np.sum( ~np.isnan(ndd[m, id]))>7:
+            ndd_annual[m, y] = np.nansum(ndd[m, id])
+
+    for c,ii in enumerate([2, 3, 4, 6 ]):
+    
         ndd_full[c,m, :] = sum_months(ndd[m, :], ii )
+    print(ndd_annual[m, :])
 
-print(ndd_full[0,0,:])
-print(ndd[0, ...])
+
 #     ndd_3m = sum_months(ndd[0, :], 3 ))
 #     ndd_4m = sum_months(ndd[0, :], 4 ))
 # ndd_6m = sum_months(ndd[0, :], 6 ))
