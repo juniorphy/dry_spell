@@ -46,9 +46,8 @@ for m in range(len(mun_name)):
     for c,ii in enumerate([2, 3, 4, 6 ]):
     
         ndd_full[c,m, :] = sum_months(ndd[m, :], ii )
-    print(ndd_annual[m, :])
+
+print(ndd_annual[2, :])
 
 
-#     ndd_3m = sum_months(ndd[0, :], 3 ))
-#     ndd_4m = sum_months(ndd[0, :], 4 ))
-# ndd_6m = sum_months(ndd[0, :], 6 ))
+
