@@ -65,26 +65,26 @@ calyearm = datesm.year
 nddm = np.full((len(municipios),len(datesm)), np.nan)
 mun_name = np.full((len(municipios),),np.nan,dtype='<U30')
 
-# for s, fin in enumerate(municipios):
+for s, fin in enumerate(municipios):
 
-#     mun_name[s] = fin.split('-')[-2]
-#     print (mun_name[s])
+    mun_name[s] = fin.split('-')[-2]
+    print (mun_name[s])
 
-#     data = np.loadtxt(fin)
-#     pr = data[:, 3]
-#     pr [ pr == -999. ] = np.nan 
-#     pr_bin = np.copy(pr)
-#     pr_bin[pr < 2. ] = 1.
-#     pr_bin[pr  > 2. ] = 0.
+    data = np.loadtxt(fin)
+    pr = data[:, 3]
+    pr [ pr == -999. ] = np.nan 
+    pr_bin = np.copy(pr)
+    pr_bin[pr < 2. ] = 1.
+    pr_bin[pr  > 2. ] = 0.
 
-#     date = calyear*10000 + calmon*100 + calday
+    date = calyear*10000 + calmon*100 + calday
     
-#     date_start = calyear[0]*10000 + calmon[0]*100 + calday[0]
-#     date_end   = calyear[-1]*10000 + calmon[-1]*100 + calday[-1]
+    date_start = calyear[0]*10000 + calmon[0]*100 + calday[0]
+    date_end   = calyear[-1]*10000 + calmon[-1]*100 + calday[-1]
     
-#     nddm[s,:] = count_nddm(pr_bin, date_start, date_end)
+    nddm[s,:] = count_nddm(pr_bin, date_start, date_end)
 
-# np.save('nddm_municipios.npy',nddm)
+np.save('nddm_municipios.npy',nddm)
 
 nddm = np.load('nddm_municipios.npy')
 ndd_full = np.full((4, nddm.shape[0], nddm.shape[1]) , np.nan)
@@ -104,4 +104,4 @@ for m in range(len(mun_name)):
     #print(ndd_annual[m, :])
 
 np.save('ndd_full.npy', ndd_full)
-np.save('ndd_full.npy', ndd_annual)
+np.save('ndd_annual.npy', ndd_annual)

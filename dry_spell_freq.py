@@ -11,9 +11,10 @@ np.set_printoptions(threshold=99999, suppress=True, precision=4)
 def to_integer(dt_time):
     return 10000*dt_time.year + 100*dt_time.month + dt_time.day
 
+'''
 def comp_dryspell(dados_bin, scale):
     dry = np.full((19, 2), np.nan)
-    if np.sum(~np.isnan(dados_bin)) > 21*scale :#for y, year in enumerate(range(start_year, end_year+1))
+    if np.sum(~np.isnan(dados_bin)) > 21*scale :
         dummy = []
         c = 0
         for bin in dados_bin:                        
@@ -27,7 +28,7 @@ def comp_dryspell(dados_bin, scale):
         dummy.append(c)
                   
         dummy = np.array(dummy) #.sort(reverse = True).
-        print(dummy)     
+        #print(dummy)     
         
         cook = np.sort(dummy)
         for k in range(3,22):
@@ -59,7 +60,8 @@ datesm = pd.date_range(datetime(start_year,start_mon,start_day), datetime(end_ye
 calyearm = datesm.year
 
 # Matrix with dryspell for several timescales 
-dry_spell_freq = np.full((len(municipios), 4, nyear, 19, 2), np.nan)
+                        #  municipios   scales years months lengths [ lenghts freqency ]
+dry_spell_freq = np.full((len(municipios), 4, nyear, 12, 19, 2), np.nan)
 
 mun_name = np.full((len(municipios),),np.nan,dtype='<U30')
 
@@ -101,11 +103,12 @@ for s, fin in enumerate(municipios):
                     #print(d1,d2)
                 
                     cut_bin = pr_bin[d1: d2+1]
-                    A = comp_dryspell(cut_bin, scale)
-                    print(mun_name[s], scale, year, mon)
-                    print(cut_bin)
-                    print(A)
-                    input()
+                    dry_spell_freq[s, scale-1, year-calyear[0],mon-1, ...] = comp_dryspell(cut_bin, scale)
+#                    print(mun_name[s], scale, year, mon)
+#                    print(cut_bin)
+#                    print(comp_dryspell(cut_bin, scale))
+
+np.save('dry_spell_freq_197301_201907_1-4months.npy', dry_spell_freq) 
                 
 #Veranico grau 1:   3-5 days
 #Veranico grau 2:  6-10 days
@@ -113,40 +116,20 @@ for s, fin in enumerate(municipios):
 #Veranico grau 4: 16-20 days
 #Veranico grau 5: 21-inf days
 
+'''
 
-# for m in range(len(mun_name)):
-    
-#     for y in range(46):
-        
-#         id = np.where(calyearm == y+1973)[0]
-#         if np.sum( ~np.isnan(nddm[m, id]))>7:
-#             ndd_annual[m, y] = np.nansum(nddm[m, id])
+dry_freq = np.load('dry_spell_freq_197301_201907_1-4months.npy')
 
-#     for c,ii in enumerate([2, 3, 4, 6 ]):
-    
-#         ndd_full[c,m, :] = sum_months(nddm[m, :], ii )
-#     #print(ndd_annual[m, :])
+print(dry_freq.shape)
 
-# np.save('ndd_full.npy', ndd_full)
-# np.save('ndd_full.npy', ndd_annual)
+def dry_spell_level(A):
+    levs = [ 3,5, 6,10, 11,15, 16,20, 21,22 ]
+    for lev in range(5):
+        a = levs[lev*2] ; b = levs[lev*2+1]
+        drylev[:, : ,: , :] = A[3,2,-2,2,a-2-1:b+1-2-1,1]
+        print(drylev)
+    return drylev
+print(dry_freq[3,2,-2,2,:,:])
 
-# def count_nddm(dbin, start_date, end_date):
-#     cook = []
-#     for ii,y in enumerate(range(start_year, end_year+1)):
-#         for m in range(12):
-#             [mon, lday ] = monthrange(y,m+1)
+dry_spell_level(dry_freq)
 
-#             if y*10000+(m+1)*100+lday > end_date:
-#                 break
-#             else:
-            
-#                 d1, d2 = index_between_dates(str(start_date), str(end_date), '{0}{1:02d}01'.format(y,m+1), '{0}{1:02d}{2}'.format(y,m+1,lday), 'days')
- 
-#                 aux = dbin[d1:d2+1]
-
-#                 if np.sum(~np.isnan(aux)) >= 21:
-#                     cook.append(np.nansum(aux))
-#                 else:
-#                     cook.append(np.nan)
-#             #    print(len(cook))
-#     return np.array(cook)
